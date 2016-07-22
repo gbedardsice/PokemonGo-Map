@@ -14,9 +14,10 @@ from datetime import datetime, timedelta
 from base64 import b64encode
 
 from . import config
-from .utils import get_pokemon_name, get_pokemon_rarity, get_pokemon_types, get_args, send_to_webhook
+from .utils import append_pokemon_names, get_pokemon_rarity, get_pokemon_types, get_args, send_to_webhook
 from .transform import transform_from_wgs_to_gcj
 from .customLog import printPokemon
+from .notifier import pokemon_found
 
 log = logging.getLogger(__name__)
 
@@ -93,7 +94,6 @@ class Pokemon(BaseModel):
 
         pokemons = []
         for p in query:
-            p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
             p['pokemon_rarity'] = get_pokemon_rarity(p['pokemon_id'])
             p['pokemon_types'] = get_pokemon_types(p['pokemon_id'])
             if args.china:
@@ -101,7 +101,7 @@ class Pokemon(BaseModel):
                     transform_from_wgs_to_gcj(p['latitude'], p['longitude'])
             pokemons.append(p)
 
-        return pokemons
+        return append_pokemon_names(pokemons)
 
     @classmethod
     def get_active_by_id(cls, ids, swLat, swLng, neLat, neLng):
@@ -124,7 +124,6 @@ class Pokemon(BaseModel):
 
         pokemons = []
         for p in query:
-            p['pokemon_name'] = get_pokemon_name(p['pokemon_id'])
             p['pokemon_rarity'] = get_pokemon_rarity(p['pokemon_id'])
             p['pokemon_types'] = get_pokemon_types(p['pokemon_id'])
             if args.china:
@@ -132,8 +131,17 @@ class Pokemon(BaseModel):
                     transform_from_wgs_to_gcj(p['latitude'], p['longitude'])
             pokemons.append(p)
 
-        return pokemons
+        return append_pokemon_names(pokemons)
 
+    @classmethod
+    def get_new(cls, data):
+        encounter_ids = [x['encounter_id'] for x in data.values()]
+        existing_pokemons = (Pokemon
+                .select()
+                .where(Pokemon.encounter_id << encounter_ids))
+        existing_encounter_ids = [x.encounter_id for x in existing_pokemons]
+        new_pokemons = [x for x in data.values() if x['encounter_id'] not in existing_encounter_ids]
+        return append_pokemon_names(new_pokemons)
 
 class Pokestop(BaseModel):
     pokestop_id = CharField(primary_key=True, max_length=50)
@@ -316,6 +324,11 @@ def parse_map(map_dict, step_location):
 
     if pokemons and config['parse_pokemon']:
         pokemons_upserted = len(pokemons)
+        log.debug("Upserting {} pokemon".format(len(pokemons)))
+        new_pokemons = Pokemon.get_new(pokemons)
+        for new_pokemon in new_pokemons:
+            log.debug("Found new pokemon! {}!".format(new_pokemon['pokemon_name']))
+            pokemon_found(new_pokemon)
         bulk_upsert(Pokemon, pokemons)
 
     if pokestops and config['parse_pokestops']:

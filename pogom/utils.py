@@ -107,6 +107,8 @@ def get_args():
     parser.add_argument('--db-max_connections', help='Max connections for the database', type=int, default=5)
     parser.add_argument('-wh', '--webhook', help='Define URL(s) to POST webhook information to',
                         nargs='*', default=False, dest='webhooks')
+    parser.add_argument('--wanted-pokemons', help='Comma separated lists of pokemons you want to be notifier for')
+    parser.add_argument('--pushbullet', help='Pushbullet API key')
     parser.set_defaults(DEBUG=False)
 
     args = parser.parse_args()
@@ -272,3 +274,12 @@ def send_to_webhook(message_type, message):
                 log.debug('Response timeout on webhook endpoint %s', w)
             except requests.exceptions.RequestException as e:
                 log.debug(e)
+
+def append_pokemon_names(data):
+    pokemons = []
+    for p in data:
+        pokemon = p.copy()
+        pokemon['pokemon_name'] = get_pokemon_name(pokemon['pokemon_id'])
+        pokemons.append(pokemon)
+
+    return pokemons

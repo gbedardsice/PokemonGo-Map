@@ -20,6 +20,7 @@ from pogom.utils import get_args, insert_mock_data
 
 from pogom.search import search_overseer_thread, fake_search_loop
 from pogom.models import init_database, create_tables, drop_tables, Pokemon, Pokestop, Gym
+from pogom.notifier import init_notifier
 
 from pogom.pgoapi.utilities import get_pos_by_name
 
@@ -73,6 +74,10 @@ if __name__ == '__main__':
 
     config['LOCALE'] = args.locale
     config['CHINA'] = args.china
+    config['PUSHBULLET_KEY'] = args.pushbullet
+    config['WANTED_POKEMONS'] = args.wanted_pokemons
+
+    init_notifier()
 
     app = Pogom(__name__)
     db = init_database(app)

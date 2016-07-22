@@ -26,5 +26,9 @@
 #host:                  # address to listen on (default 127.0.0.1)
 #port:                  # port to listen on (default 5000)
 
+# Pushbullet
+#wanted-pokemons: bulbasaur,ivysaur,venusaur,charmander,charmeleon,charizard,wartortle,blastoise,fearow,ekans,arbok,pikachu,raichu,sandshrew,sandslash,nidorina,nidoqueen,nidorino,nidoking,clefable,vulpix,ninetales,wigglytuff,gloom,vileplume,parasect,venomoth,dugtrio,persian,golduck,mankey,primeape,growlithe,arcanine,poliwhirl,poliwrath,kadabra,alakazam,machoke,machamp,weepinbell,victreebel,tentacool,tentacruel,graveler,golem,ponyta,rapidash,slowpoke,slowbro,magnemite,magneton,farfetch'd,dodrio,dewgong,grimer,muk,cloyster,haunter,gengar,onix,kingler,voltorb,electrode,exeggcute,exeggutor,cubone,marowak,hitmonlee,hitmonchan,lickitung,weezing,rhydon,chansey,tangela,kangaskhan,seadra,seaking,starmie,mr. mime,scyther,electabuzz,magmar,pinsir,gyarados,lapras,ditto,vaporeon,jolteon,flareon,porygon,omanyte,omastar,kabuto,kabutops,aerodactyl,snorlax,articuno,zapdos,moltres,dratini,dragonair,dragonite,mewtwo,mew
+#pushbullet:
+
 #Uncomment a line when you want to change its default value (Remove # at the beginning)
 #username, password, location and gmaps-key are required
