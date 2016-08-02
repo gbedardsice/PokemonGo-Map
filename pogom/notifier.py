@@ -17,9 +17,10 @@ wanted_pokemon = None
 # Initialize object
 def init_notifier():
     global pushbullet_client, wanted_pokemon
-    pushbullet_client = Pushbullet(config['PUSHBULLET_KEY'])
-    wanted_pokemon = config['WANTED_POKEMONS'].split(",")
-    wanted_pokemon = [a.lower() for a in wanted_pokemon]
+    if config['PUSHBULLET_KEY']: pushbullet_client = Pushbullet(config['PUSHBULLET_KEY'])
+    if config['WANTED_POKEMONS']:
+        wanted_pokemon = config['WANTED_POKEMONS'].split(",")
+        wanted_pokemon = [a.lower() for a in wanted_pokemon]
 
 # Safely parse incoming strings to unicode
 def _str(s):
